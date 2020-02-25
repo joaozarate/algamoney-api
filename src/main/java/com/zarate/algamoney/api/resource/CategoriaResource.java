@@ -2,6 +2,7 @@ package com.zarate.algamoney.api.resource;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,8 +48,11 @@ public class CategoriaResource {
 	}
 
 	@GetMapping("/{codigo}")
-	public Categoria buscarByCodigo(@PathVariable Long codigo) {
-		return repository.findById(codigo).orElse(null);
+	public ResponseEntity<Categoria> buscarByCodigo(@PathVariable Long codigo) {
+//		return repository.findById(codigo).map(
+//				categoria -> ResponseEntity.ok(categoria)).orElse(ResponseEntity.notFound().build());
+		Optional<Categoria> categoria = repository.findById(codigo);
+		return categoria.isPresent() ? ResponseEntity.ok(categoria.get()) : ResponseEntity.notFound().build();
 	}
 
 }
