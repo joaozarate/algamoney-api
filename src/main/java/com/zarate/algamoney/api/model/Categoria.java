@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "categoria")
@@ -20,6 +22,8 @@ public class Categoria implements Serializable {
 	@Column(name = "codigo")
 	private Long codigo;
 
+	@NotNull
+	@Size(min = 3, max = 50)
 	@Column(name = "nome")
 	private String nome;
 
