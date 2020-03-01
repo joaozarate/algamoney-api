@@ -1,16 +1,13 @@
 package com.zarate.algamoney.api.resource;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.zarate.algamoney.api.event.RecursoCriadoEvent;
 import com.zarate.algamoney.api.model.Pessoa;
@@ -35,7 +31,7 @@ public class PessoaResource {
 
 	@Autowired
 	private PessoaRepository repository;
-	
+
 	@Autowired
 	private PessoaService service;
 
@@ -71,11 +67,17 @@ public class PessoaResource {
 	public void remover(@PathVariable Long codigo) {
 		repository.deleteById(codigo);
 	}
-	
+
 	@PutMapping("/{codigo}")
-	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa ) {
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
 		Pessoa entity = service.atualizar(codigo, pessoa);
 		return ResponseEntity.ok(entity);
+	}
+
+	@PutMapping("/{codigo}/ativo")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
+		service.atualizarPropriedadeAtivo(codigo, ativo);
 	}
 
 }
