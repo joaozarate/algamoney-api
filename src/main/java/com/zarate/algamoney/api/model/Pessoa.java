@@ -26,7 +26,9 @@ public class Pessoa implements Serializable {
 	@NotNull
 	@Size(min = 1, max = 50)
 	private String nome;
-	
+
+	private Boolean ativo;
+
 	@Embedded
 	private Endereco endereco;
 
@@ -52,6 +54,14 @@ public class Pessoa implements Serializable {
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 
 }

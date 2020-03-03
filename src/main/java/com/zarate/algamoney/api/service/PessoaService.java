@@ -25,12 +25,12 @@ public class PessoaService {
 	public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
 
 		Pessoa entity = buscarPessoaByCodigo(codigo);
-		entity.getEndereco().setAtivo(ativo);
+		entity.setAtivo(ativo);
 		repository.save(entity);
 
 	}
 
-	private Pessoa buscarPessoaByCodigo(Long codigo) {
+	public Pessoa buscarPessoaByCodigo(Long codigo) {
 		Optional<Pessoa> entity = repository.findById(codigo);
 
 		if (entity.isEmpty()) {
