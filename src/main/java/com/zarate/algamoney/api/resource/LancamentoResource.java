@@ -28,6 +28,7 @@ import com.zarate.algamoney.api.handler.AlgamoneyExceptionHandler.Erro;
 import com.zarate.algamoney.api.model.Lancamento;
 import com.zarate.algamoney.api.model.Pessoa;
 import com.zarate.algamoney.api.repository.LancamentoRepository;
+import com.zarate.algamoney.api.resource.filter.LancamentoFilter;
 import com.zarate.algamoney.api.service.LancamentoService;
 
 @RestController
@@ -47,8 +48,8 @@ public class LancamentoResource {
 	private MessageSource message;
 
 	@GetMapping
-	public List<Lancamento> listar() {
-		return repository.findAll();
+	public List<Lancamento> pesquisar(LancamentoFilter filter) {
+		return repository.filtrar(filter);
 	}
 
 	@GetMapping("/{codigo}")
