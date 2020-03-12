@@ -14,12 +14,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zarate.algamoney.api.event.RecursoCriadoEvent;
@@ -37,13 +39,13 @@ public class LancamentoResource {
 
 	@Autowired
 	private LancamentoRepository repository;
-	
+
 	@Autowired
 	private LancamentoService service;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
+
 	@Autowired
 	private MessageSource message;
 
@@ -59,13 +61,19 @@ public class LancamentoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Lancamento entity, HttpServletResponse response) {
+	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento entity, HttpServletResponse response) {
 		service.salvar(entity);
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, entity.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@ExceptionHandler({PessoaInexistenteInativaException.class})
+	@DeleteMapping("/{codigo}")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long codigo) {
+		repository.deleteById(codigo);
+	}
+
+	@ExceptionHandler({ PessoaInexistenteInativaException.class })
 	public ResponseEntity<Object> handlePessoaInexistenteInativaException(PessoaInexistenteInativaException ex) {
 		String userMessage = message.getMessage("lancamento.pessoa.inexistente-ou-invalida", null, LocaleContextHolder.getLocale());
 		List<Erro> erros = Arrays.asList(new Erro(userMessage, ex.toString()));
