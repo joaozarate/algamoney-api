@@ -12,6 +12,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import com.zarate.algamoney.api.model.Lancamento;
 import com.zarate.algamoney.api.model.Lancamento_;
@@ -23,7 +26,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 	private EntityManager manager;
 
 	@Override
-	public List<Lancamento> filtrar(LancamentoFilter filter) {
+	public Page<Lancamento> filtrar(LancamentoFilter filter, Pageable pageable) {
 
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		CriteriaQuery<Lancamento> criteria = builder.createQuery(Lancamento.class);
@@ -34,8 +37,31 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		criteria.where(predicates);
 
 		TypedQuery<Lancamento> query = manager.createQuery(criteria);
+		adicionarRestrincoesPag(query, pageable);
 
-		return query.getResultList();
+		return new PageImpl<>(query.getResultList(), pageable, total(filter));
+	}
+
+	private Long total(LancamentoFilter filter) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Lancamento> root = criteria.from(Lancamento.class);
+
+		Predicate[] predicates = criarResticoes(filter, builder, root);
+
+		criteria.where(predicates);
+		criteria.select(builder.count(root));
+
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private void adicionarRestrincoesPag(TypedQuery<Lancamento> query, Pageable pageable) {
+		int pagAtual = pageable.getPageNumber();
+		int totalRegistrosPorPag = pageable.getPageSize();
+		int primeiroRegistroPag = pagAtual * totalRegistrosPorPag;
+		
+		query.setFirstResult(primeiroRegistroPag);
+		query.setMaxResults(totalRegistrosPorPag);		
 	}
 
 	private Predicate[] criarResticoes(LancamentoFilter filter, CriteriaBuilder builder, Root<Lancamento> root) {
