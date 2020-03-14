@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -25,7 +26,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 			   .withClient("angular")
 			   .secret("@angular0")
 			   .scopes("read", "write")
-			   .authorizedGrantTypes("password", "refresh_token")
+			   .authorizedGrantTypes("password", OAuth2AccessToken.REFRESH_TOKEN)
 			   .accessTokenValiditySeconds(20).refreshTokenValiditySeconds(3600*24);
 	}
 
